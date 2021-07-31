@@ -1,0 +1,83 @@
+require:
+  - rubocop-performance
+  - rubocop-rails
+  - rubocop-rspec
+
+AllCops:
+  NewCops: enable
+  UseCache: false
+  TargetRubyVersion: 2.7.4
+  TargetRailsVersion: 6.1.4
+  DisplayCopNames: true
+  Exclude:
+    - 'bin/**/*'
+    - 'db/**/*'
+    - 'config/**/*'
+    - 'Rakefile'
+    - 'spec/rails_helper.rb'
+    - 'spec/spec_helper.rb'
+    - 'spec/fixtures/**/*'
+    - 'vendor/**/*'
+
+Style/Documentation:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Metrics/MethodLength:
+  Max: 25
+
+Layout/DotPosition:
+  EnforcedStyle: trailing
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/**/*'
+
+Metrics/BlockLength:
+  IgnoredMethods: [
+    'describe', 'context', 'feature', 'scenario', 'let',
+    'shared_examples', 'shared_examples_for'
+  ]
+  Exclude:
+    - 'lib/tasks/**/*'
+    - 'spec/factories/*'
+
+Rails:
+  Enabled: true
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleExpectations:
+  Enabled: false
+
+RSpec/MessageSpies:
+  EnforcedStyle: receive
+
+RSpec/NestedGroups:
+  Max: 5
+
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+RSpec/DescribeClass:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Layout/HashAlignment:
+  Enabled: true
+  EnforcedHashRocketStyle:
+    - table
+  EnforcedColonStyle:
+    - table
+
+Style/Lambda:
+  Enabled: true
+  EnforcedStyle: literal
