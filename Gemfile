@@ -20,6 +20,7 @@ group :development, :test do
   gem 'overcommit'
   gem 'pry-byebug'
   gem 'pry-rails'
+  gem 'rspec-rails', '~> 5.0.0'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
