@@ -18,6 +18,8 @@ gem 'webpacker', '~> 5.0'
 group :development, :test do
   gem 'byebug', platforms: %i[mri mingw x64_mingw]
   gem 'overcommit'
+  gem 'pry-byebug'
+  gem 'pry-rails'
   gem 'rubocop'
   gem 'rubocop-performance'
   gem 'rubocop-rails'
