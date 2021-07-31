@@ -2,7 +2,7 @@
 
 module Webhooks
   module V1
-    class ApplicationController < ActionController::Base
+    class ApplicationController < ActionController::API
       before_action :validate_signature
 
       private
