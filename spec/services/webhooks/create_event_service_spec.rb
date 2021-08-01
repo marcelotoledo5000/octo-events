@@ -70,6 +70,13 @@ describe Webhooks::CreateEventService, type: :service do
       it 'is expected to return errors messages' do
         expect(create_service.perform.errors).to include("Data can't be blank")
       end
+
+      it 'is expected to log errors' do
+        expect(Rails.logger).to receive(:info).
+          with("Can't proccess webhook. type: issues. params:#{params}. Errors: [\"Data can't be blank\"]")
+
+        create_service.perform
+      end
     end
   end
 end
