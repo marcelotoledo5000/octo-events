@@ -12,7 +12,7 @@ module Webhooks
     def perform
       return unless issue_event?
 
-      event = WebhookEvent.new(data: params)
+      event = WebhookEvent.new(data: JSON.parse(params.to_json))
 
       if event.save
         OpenStruct.new({ success?: true, event: event })
