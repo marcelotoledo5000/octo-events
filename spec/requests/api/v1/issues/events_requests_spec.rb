@@ -3,7 +3,19 @@
 require 'rails_helper'
 
 describe 'Get issue events', type: :request do
-  subject(:run_request) { get("/api/v1/issues/#{query_issue_number}/events") }
+  subject(:run_request) do
+    get(
+      "/api/v1/issues/#{query_issue_number}/events",
+      headers: request_headers
+    )
+  end
+
+  let(:request_headers) do
+    {
+      'HTTP_AUTHORIZATION' => ActionController::HttpAuthentication::Token.
+        encode_credentials(ENV['API_TOKEN'])
+    }
+  end
 
   let(:issue_number) { 2 }
   let(:query_issue_number) { 2 }
@@ -67,6 +79,16 @@ describe 'Get issue events', type: :request do
       run_request
 
       expect(response).to have_http_status :not_found
+    end
+  end
+
+  context 'with an unauthorized request' do
+    let(:request_headers) { {} }
+
+    it 'returns a not authorized status' do
+      run_request
+
+      expect(response).to have_http_status :unauthorized
     end
   end
 end

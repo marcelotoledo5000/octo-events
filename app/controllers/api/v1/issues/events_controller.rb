@@ -3,7 +3,7 @@
 module Api
   module V1
     module Issues
-      class EventsController < ActionController::API
+      class EventsController < Api::V1::ApplicationController
         def index
           events = FilterIssueEventsByNumberQuery.new(params[:issue_number]).perform
 

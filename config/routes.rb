@@ -6,4 +6,12 @@ Rails.application.routes.draw do
       resources :events, only: :create
     end
   end
+
+  namespace :api, constraints: { format: 'json' } do
+    namespace :v1 do
+      resources :issues, only: [], param: :number  do
+        resources :events, only: :index, module: :issues
+      end
+    end
+  end
 end
