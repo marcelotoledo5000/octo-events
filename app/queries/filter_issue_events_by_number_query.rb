@@ -1,26 +1,26 @@
 # frozen_string_literal: true
 
 class FilterIssueEventsByNumberQuery
-  attr_reader :issue_number
-
   def initialize(issue_number)
     @issue_number = issue_number
   end
 
   def perform
-    OpenStruct.new({ response: webhook_events, data_fields: webhook_events.pluck(:data) })
+    @issue = Issue.find_by(number: issue_number)
+    OpenStruct.new({ issue: @issue, response: webhook_events, data_attributes: data_attribute })
   end
 
   private
 
+  attr_reader :issue, :issue_number
+
   def webhook_events
-    @webhook_events ||=
-      WebhookEvent.where('data @> ?', {
-        event: {
-          issue: {
-            number: issue_number&.to_i
-          }
-        }
-      }.to_json)
+    return [] unless issue
+
+    @webhook_events ||= issue.webhook_events
+  end
+
+  def data_attribute
+    @data_attribute ||= webhook_events.pluck(:data)
   end
 end

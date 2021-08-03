@@ -49,7 +49,8 @@ describe 'Get issue events', type: :request do
   end
 
   let(:webhook_event) do
-    WebhookEvent.create(data: issue_params)
+    issue = Issue.create(number: issue_number)
+    issue.webhook_events.create(hook_id: '4242', data: issue_params)
   end
 
   let(:response_data) { JSON.parse(response.body) }
