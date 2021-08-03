@@ -6,4 +6,8 @@ RSpec.describe WebhookEvent, type: :model do
   context 'with validations' do
     it { is_expected.to validate_presence_of :data }
   end
+
+  context 'with associations' do
+    it { is_expected.to belong_to(:issue) }
+  end
 end

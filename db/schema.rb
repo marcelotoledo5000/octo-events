@@ -10,15 +10,25 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_01_154502) do
+ActiveRecord::Schema.define(version: 2021_08_03_152107) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "issues", force: :cascade do |t|
+    t.integer "number"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["number"], name: "index_issues_on_number", unique: true
+  end
 
   create_table "webhook_events", force: :cascade do |t|
     t.jsonb "data"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.bigint "issue_id", null: false
+    t.index ["issue_id"], name: "index_webhook_events_on_issue_id"
   end
 
+  add_foreign_key "webhook_events", "issues"
 end
