@@ -15,7 +15,7 @@ describe 'Create webhooks', type: :request do
     {
       'X-Hub-Signature-256'   => secret_token,
       'HTTP_X_GITHUB_EVENT'   => 'issues',
-      'HTTP_X_GITHUB_HOOK_ID' => '424242'
+      'HTTP_X_GITHUB_DELIVERY' => '424242'
     }
   end
   let(:request_params) { { action: 'create' }.to_json }

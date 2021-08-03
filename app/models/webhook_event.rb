@@ -5,5 +5,5 @@ class WebhookEvent < ApplicationRecord
 
   belongs_to :issue
 
-  validates :data, :hook_id, presence: true
+  validates :data, :github_delivery_id, presence: true
 end

@@ -17,7 +17,7 @@ RSpec.describe FilterIssueEventsByNumberQuery do
 
   let(:webhook_event) do
     issue = Issue.create(number: issue_number)
-    WebhookEvent.create(issue: issue, hook_id: '4242', data: issue_params)
+    WebhookEvent.create(issue: issue, github_delivery_id: '4242', data: issue_params)
   end
 
   before do

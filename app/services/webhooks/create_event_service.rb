@@ -2,9 +2,9 @@
 
 module Webhooks
   class CreateEventService
-    def initialize(event_type, hook_id, params)
+    def initialize(event_type, github_delivery_id, params)
       @event_type = event_type.to_sym
-      @hook_id = hook_id
+      @github_delivery_id = github_delivery_id
       @params = params
     end
 
@@ -12,7 +12,11 @@ module Webhooks
       return unless WebhookEvent::ACCEPTABLE_TYPES.include?(event_type)
       return if webhook_already_created
 
-      webhook_event = WebhookEvent.new(issue: issue, hook_id: hook_id, data: JSON.parse(params.to_json))
+      webhook_event = WebhookEvent.new(
+        issue: issue,
+        github_delivery_id: github_delivery_id,
+        data: JSON.parse(params.to_json)
+      )
 
       return handle_failure(webhook_event) unless webhook_event.save
 
@@ -21,10 +25,10 @@ module Webhooks
 
     private
 
-    attr_reader :event_type, :hook_id, :params
+    attr_reader :event_type, :github_delivery_id, :params
 
     def webhook_already_created
-      WebhookEvent.find_by(hook_id: hook_id)
+      WebhookEvent.find_by(github_delivery_id: github_delivery_id)
     end
 
     def issue

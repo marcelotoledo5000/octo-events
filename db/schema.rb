@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_08_03_214036) do
+ActiveRecord::Schema.define(version: 2021_08_03_232330) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 2021_08_03_214036) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.bigint "issue_id", null: false
-    t.string "hook_id"
+    t.string "github_delivery_id"
     t.index ["issue_id"], name: "index_webhook_events_on_issue_id"
   end
 

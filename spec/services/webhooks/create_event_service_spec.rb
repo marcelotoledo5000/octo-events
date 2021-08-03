@@ -3,10 +3,10 @@
 require 'rails_helper'
 
 describe Webhooks::CreateEventService, type: :service do
-  subject(:create_service) { described_class.new(event_type, hook_id, params) }
+  subject(:create_service) { described_class.new(event_type, github_delivery_id, params) }
 
-  let(:hook_id) { '424242' }
-  let(:hook_id2) { '28064212' }
+  let(:github_delivery_id) { '424242' }
+  let(:github_delivery_id2) { '28064212' }
   let(:params) do
     {
       action: 'edited',
@@ -35,7 +35,7 @@ describe Webhooks::CreateEventService, type: :service do
   end
 
   context 'with success' do
-    let(:create_second_event) { described_class.new(event_type, hook_id2, params) }
+    let(:create_second_event) { described_class.new(event_type, github_delivery_id2, params) }
     let(:event_type) { 'issues' }
 
     it 'returns a success status' do

@@ -6,13 +6,13 @@ describe Webhooks::EventHandlerService, type: :service do
   subject(:execute_service) { described_class.new(request, params).execute }
 
   let(:event_type) { 'issues' }
-  let(:hook_id) { '4242' }
+  let(:delivery_id) { '4242' }
   let(:request) do
     OpenStruct.new(
       {
         env: {
-          'HTTP_X_GITHUB_EVENT'   => event_type,
-          'HTTP_X_GITHUB_HOOK_ID' => hook_id
+          'HTTP_X_GITHUB_EVENT'    => event_type,
+          'HTTP_X_GITHUB_DELIVERY' => delivery_id
         }
       }
     )
@@ -51,7 +51,7 @@ describe Webhooks::EventHandlerService, type: :service do
     end
 
     it 'Enqueue a WebhookCreateJob' do
-      expect(WebhookCreateJob).to receive(:perform_now).with(event_type, hook_id, params)
+      expect(WebhookCreateJob).to receive(:perform_now).with(event_type, delivery_id, params)
 
       execute_service
     end
