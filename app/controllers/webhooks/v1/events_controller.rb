@@ -4,14 +4,14 @@ module Webhooks
   module V1
     class EventsController < Webhooks::V1::ApplicationController
       def create
-        Webhooks::CreateEventService.new(webhook_event_type, params).perform
-        render json: {}, status: :ok
+        Webhooks::EventHandlerService.new(request, permitted_params).execute
+        render json: {}, status: :accepted
       end
 
       private
 
-      def webhook_event_type
-        request.env['HTTP_X_GITHUB_EVENT']
+      def permitted_params
+        params.permit!.to_h
       end
     end
   end

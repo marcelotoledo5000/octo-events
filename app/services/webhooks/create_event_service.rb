@@ -2,42 +2,56 @@
 
 module Webhooks
   class CreateEventService
-    attr_reader :event_type, :params
-
-    def initialize(event_type, params)
-      @event_type = event_type
+    def initialize(event_type, hook_id, params)
+      @event_type = event_type.to_sym
+      @hook_id = hook_id
       @params = params
     end
 
     def perform
-      return unless issue_event?
+      return unless WebhookEvent::ACCEPTABLE_TYPES.include?(event_type)
+      return if webhook_already_created
 
-      event = WebhookEvent.new(data: JSON.parse(params.to_json))
+      webhook_event = WebhookEvent.new(issue: issue, hook_id: hook_id, data: JSON.parse(params.to_json))
 
-      if event.save
-        OpenStruct.new({ success?: true, event: event })
-      else
-        handle_failure(event)
-      end
+      return handle_failure(webhook_event) unless webhook_event.save
+
+      OpenStruct.new({ success?: true, event: webhook_event })
     end
 
     private
 
-    def handle_failure(event)
+    attr_reader :event_type, :hook_id, :params
+
+    def webhook_already_created
+      WebhookEvent.find_by(hook_id: hook_id)
+    end
+
+    def issue
+      return unless issue_number
+
+      Issue.where(number: issue_number).first_or_initialize
+    end
+
+    def issue_number
+      return unless params.is_a?(Hash)
+
+      params.dig(:issue, :number)
+    end
+
+    def handle_failure(webhook_event)
+      errors = webhook_event.errors.full_messages
+
       Rails.logger.
-        info("Can't proccess webhook. type: #{event_type}. params:#{params}. Errors: #{event.errors.full_messages}")
+        info("Can't create webhook event. type: #{event_type}. params:#{params}. Errors: #{errors}")
 
       OpenStruct.new(
         {
           success?: false,
-          event: event,
-          errors: event.errors.full_messages
+          event: webhook_event,
+          errors: errors
         }
       )
-    end
-
-    def issue_event?
-      event_type == 'issues'
     end
   end
 end

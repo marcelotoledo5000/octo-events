@@ -3,38 +3,39 @@
 require 'rails_helper'
 
 describe Webhooks::CreateEventService, type: :service do
-  subject(:create_service) { described_class.new(event_type, params) }
+  subject(:create_service) { described_class.new(event_type, hook_id, params) }
 
+  let(:hook_id) { '424242' }
+  let(:hook_id2) { '28064212' }
   let(:params) do
     {
-      event: {
-        issue: {
-          id: 1,
-          url: 'https://api.github.com/repos/xxxx/xxxx/issues/1',
-          body: '',
-          user: {
-            id: '599456',
-            url: 'https://api.github.com/users/ThawanFidelis'
-          },
-          state: 'open',
-          title: 'ISSUE EDITADA',
-          labels: [],
-          number: 2,
-          assignee: nil,
-          comments: 0
+      action: 'edited',
+      issue: {
+        id: 1,
+        url: 'https://api.github.com/repos/xxxx/xxxx/issues/1',
+        body: '',
+        user: {
+          id: '599456',
+          url: 'https://api.github.com/users/ThawanFidelis'
         },
-        action: 'edited',
-        sender: {
-          id: 1,
-          url: 'https://api.github.com/users/ThawanFidelis',
-          type: 'User',
-          login: 'ThawanFidelis'
-        }
+        state: 'open',
+        title: 'ISSUE EDITADA',
+        labels: [],
+        number: 2,
+        assignee: nil,
+        comments: 0
+      },
+      sender: {
+        id: 1,
+        url: 'https://api.github.com/users/ThawanFidelis',
+        type: 'User',
+        login: 'ThawanFidelis'
       }
     }
   end
 
   context 'with success' do
+    let(:create_second_event) { described_class.new(event_type, hook_id2, params) }
     let(:event_type) { 'issues' }
 
     it 'returns a success status' do
@@ -43,6 +44,14 @@ describe Webhooks::CreateEventService, type: :service do
 
     it 'creates a new webhook event on DB' do
       expect { create_service.perform }.to change(WebhookEvent, :count).by(1)
+    end
+
+    it 'does not duplicate issue when issue_number already exists' do
+      create_service.perform
+
+      expect { create_second_event.perform }.
+        to change(WebhookEvent, :count).by(1).
+        and change(Issue, :count).by(0)
     end
   end
 
@@ -72,8 +81,10 @@ describe Webhooks::CreateEventService, type: :service do
       end
 
       it 'is expected to log errors' do
-        expect(Rails.logger).to receive(:info).
-          with("Can't proccess webhook. type: issues. params:#{params}. Errors: [\"Data can't be blank\"]")
+        errors = "[\"Issue must exist\", \"Data can't be blank\"]"
+        error_msg = "Can't create webhook event. type: issues. params:#{params}. Errors: #{errors}"
+
+        expect(Rails.logger).to receive(:info).with(error_msg)
 
         create_service.perform
       end
