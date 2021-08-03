@@ -84,6 +84,16 @@ If you use `curl`:
 
     curl -H 'Accept: application/json' -H "Authorization: Bearer ${TOKEN}" http://localhost:3000/api/v1/issues/:issue_number/events
 
+
+<br />
+
+### Runnin specs
+
+        $ rspec spec
+
 <br />
 <br />
 <br />
+
+
+
