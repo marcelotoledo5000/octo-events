@@ -13,11 +13,22 @@ describe 'Create webhook event', type: :request do
 
   let(:request_headers) do
     {
-      'X-Hub-Signature-256' => secret_token,
-      'HTTP_X_GITHUB_EVENT' => 'issues'
+      'Content-type'          => Mime[:json].to_s,
+      'X-Hub-Signature-256'   => secret_token,
+      'HTTP_X_GITHUB_EVENT'   => 'issues',
+      'HTTP_X_GITHUB_HOOK_ID' => '424242'
     }
   end
-  let(:request_params) { { action: 'create' }.to_json }
+
+  let(:request_params) do
+    {
+      action: 'create',
+      issue: {
+        number: 42
+      }
+    }.to_json
+  end
+
   let(:formated_response) { JSON.parse(response.body) }
 
   context 'with success' do
@@ -29,7 +40,7 @@ describe 'Create webhook event', type: :request do
     it 'returns a success response' do
       run_request
 
-      expect(response).to have_http_status :ok
+      expect(response).to have_http_status :accepted
     end
 
     it 'creates a new webhook event on DB' do

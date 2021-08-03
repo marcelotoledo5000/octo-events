@@ -15,7 +15,10 @@ RSpec.describe FilterIssueEventsByNumberQuery do
     }
   end
 
-  let(:webhook_event) { WebhookEvent.create(data: issue_params) }
+  let(:webhook_event) do
+    issue = Issue.create(number: issue_number)
+    WebhookEvent.create(issue: issue, hook_id: '4242', data: issue_params)
+  end
 
   before do
     webhook_event
@@ -32,7 +35,7 @@ RSpec.describe FilterIssueEventsByNumberQuery do
     end
 
     it 'returns only data fields from events found' do
-      expect(events_filter_query.data_fields).to eq(WebhookEvent.pluck(:data))
+      expect(events_filter_query.data_attributes).to eq(WebhookEvent.pluck(:data))
     end
   end
 
@@ -44,8 +47,8 @@ RSpec.describe FilterIssueEventsByNumberQuery do
       expect(events_filter_query.response).to eq([])
     end
 
-    it 'returns an empty array for data_fields when no event was found' do
-      expect(events_filter_query.data_fields).to eq([])
+    it 'returns an empty array for data_attributes when no event was found' do
+      expect(events_filter_query.data_attributes).to eq([])
     end
   end
 
@@ -57,8 +60,8 @@ RSpec.describe FilterIssueEventsByNumberQuery do
       expect(events_filter_query.response).to eq([])
     end
 
-    it 'returns an empty array for data_fields when no issue_number was passed' do
-      expect(events_filter_query.data_fields).to eq([])
+    it 'returns an empty array for data_attributes when no issue_number was passed' do
+      expect(events_filter_query.data_attributes).to eq([])
     end
   end
 end
